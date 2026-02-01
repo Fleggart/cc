@@ -1,48 +1,12 @@
-// === 工具函数：复制到剪贴板 ===
+// === 工具函数：复制到剪贴板（极简版） ===
 async function copyToClipboard(text) {
-    try {
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(text);
-            return true;
-        } else {
-            return fallbackCopyTextToClipboard(text);
-        }
-    } catch (err) {
-        console.error('复制失败:', err);
-        return false;
-    }
+    await navigator.clipboard.writeText(text);
 }
 
-function fallbackCopyTextToClipboard(text) {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    textarea.style.top = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-
-    try {
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textarea);
-        return successful;
-    } catch (err) {
-        document.body.removeChild(textarea);
-        console.error('Fallback 复制也失败:', err);
-        return false;
-    }
-}
-
-function showCopyFeedback(success = true) {
+function showCopyFeedback() {
     const btn = document.getElementById('copyBtn');
-    const originalText = btn.textContent;
-    if (success) {
-        btn.textContent = '✅ 已复制！';
-        btn.style.background = '#27ae60';
-    } else {
-        btn.textContent = '❌ 复制失败';
-        btn.style.background = '#e74c3c';
-    }
+    btn.textContent = '✅ 已复制！';
+    btn.style.background = '#27ae60';
 
     setTimeout(() => {
         btn.textContent = '📋 复制脚本';
@@ -66,19 +30,21 @@ function generateHardnessProps(id, useStrength, hardness, resistance, hardnessOn
 
 function generateAdvancedProps(id, harvestLevel, lightLevel, lightOpacity, slipperiness) {
     let lines = [];
-    if (harvestLevel && harvestLevel != '0') {
+
+    if (harvestLevel && harvestLevel !== '0') {
         lines.push(`${id}.setHarvestLevel(${harvestLevel}); // 挖掘等级`);
     }
-    if (lightLevel && lightLevel != '0') {
+    if (lightLevel && lightLevel !== '0') {
         lines.push(`${id}.setLightLevel(${lightLevel}); // 发光强度 (0-15)`);
     }
-    if (lightOpacity && lightOpacity != '0') {
+    if (lightOpacity && lightOpacity !== '0') {
         lines.push(`${id}.setLightOpacity(${lightOpacity}); // 光阻挡程度 (0-255)`);
     }
-    if (slipperiness && slipperiness != '0.6') {
+    if (slipperiness && slipperiness !== '0.6') {
         lines.push(`${id}.setSlipperiness(${slipperiness}); // 滑动性 (0-1)`);
     }
-    return lines.join('\n') + '\n';
+
+    return lines.length ? lines.join('\n') + '\n' : '';
 }
 
 function generateScript() {
@@ -100,21 +66,14 @@ function generateScript() {
     let code = generateBaseBlock(id, material);
 
     // === 硬度相关 ===
-    let hardness = parseFloat(document.getElementById('hardnessOnlyInput').value);
-    let resistance = parseFloat(document.getElementById('resistance').value);
-    let hardnessStrength = parseFloat(document.getElementById('hardnessStrength').value);
+    const hardnessOnly = parseFloat(document.getElementById('hardnessOnlyInput').value);
+    const hardnessStrength = parseFloat(document.getElementById('hardnessStrength').value);
+    const resistance = parseFloat(document.getElementById('resistance').value);
 
     if (useStrength) {
-        code += generateHardnessProps(id, true, hardnessStrength, resistance, null);
-    } else {
-        if (!isNaN(hardness) && hardness > 0) {
-            code += generateHardnessProps(id, false, hardness, null, null);
-        } else {
-            const hardnessOnly = parseFloat(document.getElementById('hardnessOnlyInput').value);
-            if (!isNaN(hardnessOnly)) {
-                code += generateHardnessProps(id, false, null, null, hardnessOnly);
-            }
-        }
+        code += generateHardnessProps(id, true, hardnessStrength, resistance);
+    } else if (!isNaN(hardnessOnly)) {
+        code += generateHardnessProps(id, false, null, null, hardnessOnly);
     }
 
     if (unbreakable) {
@@ -122,16 +81,13 @@ function generateScript() {
     }
 
     // === 高级属性 ===
-    const advancedLines = generateAdvancedProps(
+    code += generateAdvancedProps(
         id,
         document.getElementById('harvestLevel').value,
         document.getElementById('lightLevel').value,
         document.getElementById('lightOpacity').value,
         document.getElementById('slipperiness').value
     );
-    if (advancedLines) {
-        code += advancedLines;
-    }
 
     code += `${id}.register(); // 注册方块\n`;
 
@@ -139,29 +95,31 @@ function generateScript() {
     document.getElementById('output').textContent = code;
 }
 
-// === 事件监听优化 ===
+// === 事件监听 ===
 document.addEventListener('DOMContentLoaded', () => {
     const useStrengthCheckbox = document.getElementById('useStrength');
     const strengthInputs = document.getElementById('strengthInputs');
-    const hardnessOnly = document.getElementById('hardnessOnly');
+    const hardnessOnlyBlock = document.getElementById('hardnessOnly');
     const generateBtn = document.getElementById('generateBtn');
     const copyBtn = document.getElementById('copyBtn');
 
-    // 强度系统显示逻辑
+    // 强度 / 硬度 UI 切换
     useStrengthCheckbox.addEventListener('change', function () {
-        const isChecked = this.checked;
-        strengthInputs.style.display = isChecked ? 'block' : 'none';
-        hardnessOnly.style.display = isChecked ? 'none' : 'block';
+        const enabled = this.checked;
+        strengthInputs.style.display = enabled ? 'block' : 'none';
+        hardnessOnlyBlock.style.display = enabled ? 'none' : 'block';
     });
 
     generateBtn.addEventListener('click', generateScript);
+
     copyBtn.addEventListener('click', async () => {
         const output = document.getElementById('output').textContent;
         if (!output || output === '生成的脚本会显示在这里...') {
             alert('❌ 没有可复制的脚本，请先生成！');
             return;
         }
-        const success = await copyToClipboard(output);
-        showCopyFeedback(success);
+
+        await copyToClipboard(output);
+        showCopyFeedback();
     });
 });
