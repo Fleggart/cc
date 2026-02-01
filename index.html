@@ -1,24 +1,33 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" x-data="blockGenerator()" class="bg-gray-100 text-gray-900">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CraftTweaker 方块脚本生成器</title>
-    <!-- 引入外部 CSS 文件 -->
-    <link rel="stylesheet" href="styles.css">
+    <title>CraftTweaker UI 美化脚本生成器</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 </head>
-<body>
+<body class="p-8">
 
-    <h1>CraftTweaker 方块脚本生成器</h1>
+<div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6 space-y-6">
+    <h1 class="text-2xl font-bold text-center">脚本生成器</h1>
 
-    <div class="form-group">
-        <label for="blockId">方块 ID:</label>
-        <input type="text" id="blockId" placeholder="例如：stone_pillar">
+    <!-- 方块 ID -->
+    <div>
+        <label class="block text-sm font-medium">方块 ID</label>
+        <input type="text" x-model="blockId"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="例：stone_pillar">
     </div>
 
-    <div class="form-group">
-        <label for="material">材质:</label>
-        <select id="material">
+    <!-- 材质 -->
+    <div>
+        <label class="block text-sm font-medium">材质</label>
+        <select x-model="material"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             <option value="rock">岩石</option>
             <option value="wood">木材</option>
             <option value="iron">金属</option>
@@ -26,65 +35,134 @@
         </select>
     </div>
 
-    <div class="form-group">
-        <label>
-            <input type="checkbox" id="unbreakable"> 不可破坏
+    <!-- 选项开关 -->
+    <div class="flex items-center space-x-4">
+        <label class="inline-flex items-center">
+            <input type="checkbox" x-model="unbreakable" class="rounded text-indigo-600">
+            <span class="ml-2">不可破坏</span>
+        </label>
+
+        <label class="inline-flex items-center">
+            <input type="checkbox" x-model="useStrength" class="rounded text-indigo-600">
+            <span class="ml-2">启用爆炸抗性</span>
         </label>
     </div>
 
-    <div class="form-group">
-        <label>
-            <input type="checkbox" id="useStrength"> 爆炸抗性
-        </label>
-    </div>
-
-    <div id="strengthInputs" class="section" style="display:none;">
-        <h3>强度设置</h3>
-        <div class="form-group">
-            <label for="hardnessStrength">硬度:</label>
-            <input type="number" id="hardnessStrength" value="4.0" step="0.1" min="0">
+    <!-- 爆炸抗性 / 硬度 -->
+    <div x-show="useStrength" class="space-y-2">
+        <div>
+            <label class="block text-sm font-medium">硬度</label>
+            <input type="number" x-model.number="hardnessStrength"
+                class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
         </div>
-        <div class="form-group">
-            <label for="resistance">爆炸抗性:</label>
-            <input type="number" id="resistance" value="50.0" step="0.1" min="0">
+        <div>
+            <label class="block text-sm font-medium">爆炸抗性</label>
+            <input type="number" x-model.number="resistance"
+                class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
         </div>
     </div>
 
-    <div id="hardnessOnly" class="section" style="display:none;">
-        <h3>基础设置</h3>
-        <div class="form-group">
-            <label for="hardnessOnlyInput">硬度:</label>
-            <input type="number" id="hardnessOnlyInput" value="4.0" step="0.1" min="0">
+    <!-- 普通硬度 -->
+    <div x-show="!useStrength">
+        <label class="block text-sm font-medium">硬度</label>
+        <input type="number" x-model.number="hardnessOnly"
+            class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
+    </div>
+
+    <!-- 高级属性 -->
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium">挖掘等级</label>
+            <input type="number" x-model.number="harvestLevel"
+                class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
+            <label class="block text-sm font-medium">发光强度</label>
+            <input type="number" x-model.number="lightLevel"
+                class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
+            <label class="block text-sm font-medium">光阻挡</label>
+            <input type="number" x-model.number="lightOpacity"
+                class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
+            <label class="block text-sm font-medium">滑动性</label>
+            <input type="number" x-model.number="slipperiness"
+                class="mt-1 border-gray-300 rounded w-full focus:ring-indigo-500 focus:border-indigo-500">
         </div>
     </div>
 
-    <div class="section">
-        <h3>高级属性</h3>
-        <div class="form-group">
-            <label for="harvestLevel">挖掘等级:</label>
-            <input type="number" id="harvestLevel" value="0" step="1">
-        </div>
-        <div class="form-group">
-            <label for="lightLevel">发光强度:</label>
-            <input type="number" id="lightLevel" value="0" min="0" max="15" step="1">
-        </div>
-        <div class="form-group">
-            <label for="lightOpacity">光阻挡程度:</label>
-            <input type="number" id="lightOpacity" value="0" min="0" max="255" step="1">
-        </div>
-        <div class="form-group">
-            <label for="slipperiness">滑动性:</label>
-            <input type="number" id="slipperiness" value="0.6" min="0" max="1" step="0.01">
-        </div>
+    <!-- 按钮 -->
+    <div class="flex justify-between space-x-3">
+        <button @click="generateScript"
+            class="flex-1 bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition">
+            生成脚本
+        </button>
+        <button @click="copyScript"
+            class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition">
+            复制脚本
+        </button>
     </div>
 
-    <button id="generateBtn">生成脚本</button>
+    <!-- 输出区 -->
+    <pre class="bg-gray-100 p-4 rounded text-sm text-gray-800 overflow-auto"
+         x-text="outputText"></pre>
+</div>
 
-    <div class="copy-container">
-        <pre id="output">生成的脚本会显示在这里...</pre>
-        <button id="copyBtn" class="copy-btn">📋 复制脚本</button>
-    </div>
+<script>
+function blockGenerator() {
+    return {
+        blockId: '',
+        material: 'rock',
+        unbreakable: false,
+        useStrength: false,
+        hardnessStrength: 4.0,
+        resistance: 50.0,
+        hardnessOnly: 4.0,
+        harvestLevel: 0,
+        lightLevel: 0,
+        lightOpacity: 0,
+        slipperiness: 0.6,
+        outputText: "生成的脚本会显示在这里...",
 
-    <script src="script.js"></script>
+        generateBaseBlock(id, material) {
+            return `val ${id} = GenericBlock.createPillar(blockmaterial:${material}, "${id}");\n`;
+        },
+
+        generateHardnessProps(id) {
+            if (this.useStrength) {
+                return `${id}.setStrength(${this.hardnessStrength}, ${this.resistance});\n`;
+            }
+            return `${id}.setHardness(${this.hardnessOnly});\n`;
+        },
+
+        generateAdvancedProps(id) {
+            let lines = [];
+            if (this.harvestLevel) lines.push(`${id}.setHarvestLevel(${this.harvestLevel});`);
+            if (this.lightLevel) lines.push(`${id}.setLightLevel(${this.lightLevel});`);
+            if (this.lightOpacity) lines.push(`${id}.setLightOpacity(${this.lightOpacity});`);
+            if (this.slipperiness !== 0.6) lines.push(`${id}.setSlipperiness(${this.slipperiness});`);
+            return lines.map(l=>l+"\n").join("");
+        },
+
+        generateScript() {
+            if (!this.blockId.trim()) return alert('请输入方块 ID');
+            let code = this.generateBaseBlock(this.blockId, this.material);
+            code += this.generateHardnessProps(this.blockId);
+            if (this.unbreakable) code += `${this.blockId}.setUnbreakable();\n`;
+            code += this.generateAdvancedProps(this.blockId);
+            code += `${this.blockId}.register();\n`;
+            this.outputText = code;
+        },
+
+        async copyScript() {
+            await navigator.clipboard.writeText(this.outputText);
+            alert("复制成功！");
+        }
+    }
+}
+</script>
+
 </body>
 </html>
