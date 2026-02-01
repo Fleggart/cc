@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CraftTweaker 方块脚本生成器</title>
+    <!-- 引入外部 CSS 文件 -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>CraftTweaker 方块脚本生成器</h1>
+
+    <div class="form-group">
+        <label for="blockId">方块 ID:</label>
+        <input type="text" id="blockId" placeholder="例如：stone_pillar">
+    </div>
+
+    <div class="form-group">
+        <label for="material">材质:</label>
+        <select id="material">
+            <option value="rock">岩石</option>
+            <option value="wood">木材</option>
+            <option value="iron">金属</option>
+            <option value="glass">玻璃</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="unbreakable"> 不可破坏
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="useStrength"> 爆炸抗性
+        </label>
+    </div>
+
+    <div id="strengthInputs" class="section" style="display:none;">
+        <h3>强度设置</h3>
+        <div class="form-group">
+            <label for="hardnessStrength">硬度:</label>
+            <input type="number" id="hardnessStrength" value="4.0" step="0.1" min="0">
+        </div>
+        <div class="form-group">
+            <label for="resistance">爆炸抗性:</label>
+            <input type="number" id="resistance" value="50.0" step="0.1" min="0">
+        </div>
+    </div>
+
+    <div id="hardnessOnly" class="section" style="display:none;">
+        <h3>基础设置</h3>
+        <div class="form-group">
+            <label for="hardnessOnlyInput">硬度:</label>
+            <input type="number" id="hardnessOnlyInput" value="4.0" step="0.1" min="0">
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>高级属性</h3>
+        <div class="form-group">
+            <label for="harvestLevel">挖掘等级:</label>
+            <input type="number" id="harvestLevel" value="0" step="1">
+        </div>
+        <div class="form-group">
+            <label for="lightLevel">发光强度:</label>
+            <input type="number" id="lightLevel" value="0" min="0" max="15" step="1">
+        </div>
+        <div class="form-group">
+            <label for="lightOpacity">光阻挡程度:</label>
+            <input type="number" id="lightOpacity" value="0" min="0" max="255" step="1">
+        </div>
+        <div class="form-group">
+            <label for="slipperiness">滑动性:</label>
+            <input type="number" id="slipperiness" value="0.6" min="0" max="1" step="0.01">
+        </div>
+    </div>
+
+    <button id="generateBtn">生成脚本</button>
+
+    <div class="copy-container">
+        <pre id="output">生成的脚本会显示在这里...</pre>
+        <button id="copyBtn" class="copy-btn">📋 复制脚本</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

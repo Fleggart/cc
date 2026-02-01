@@ -1,0 +1,129 @@
+/* 基础页面样式 */
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 20px; 
+    background: #fafafa; 
+    color: #333;
+}
+
+h1 { 
+    color: #2c3e50; 
+    text-align: center;
+}
+
+/* 表单组样式 */
+.form-group {
+    margin: 15px 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+    color: #34495e;
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* 复选框样式调整 */
+.form-group label input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+/* 按钮样式 */
+button { 
+    margin: 15px 0;
+    padding: 10px 14px;
+    background: #2980b9; 
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+button:hover { 
+    background: #1c5980; 
+}
+
+/* 复制按钮样式（绿色） */
+#copyBtn {
+    background: #27ae60; 
+}
+
+#copyBtn:hover {
+    background: #1e8449;
+}
+
+/* 脚本输出框样式 */
+.copy-container {
+    position: relative;
+    margin-top: 20px;
+}
+
+pre { 
+    background: #fff; 
+    border: 1px solid #ccc; 
+    padding: 12px; 
+    margin: 0;
+    white-space: pre-wrap; 
+    word-break: break-word;
+    border-radius: 4px;
+    min-height: 50px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* 复制按钮（固定在右上角） */
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background: #1e8449;
+}
+
+/* 分组样式（高级属性等） */
+.section {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+.section h3 {
+    margin: 0 0 10px 0;
+    color: #34495e;
+    font-size: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    body {
+        margin: 10px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        max-width: 100%;
+    }
+}
